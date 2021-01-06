@@ -1,4 +1,4 @@
-#mybatis自动化生成代码项目：code-generator2
+#mybatis自动化生成代码项目：tkmybatis-code-generator
 1、该项目的功能是生成通用mybatis增删改查基础类，
     通过模板引擎freemarker生成相关类并下载zip压缩文件到本地。
 2、生成的所有entity采用lombok自动生成getter,setter,toString等，带数据库字段注释，
@@ -13,7 +13,7 @@
     自定义扩展类(可选)
     daoExtend-->对应的模板:daoExtend.ftl
     mapperExtend-->对应的模板:mapperExtend.ftl(xml)
-5、采用java web方式，chrome地址输入：http://localhost:8088/index,
+5、采用java web方式，chrome地址输入：http://localhost:8081/index,
    在页面提交表单，输出文件到zip压缩包供下载。
 6、支出多表批量代码生成。
 7、目前只支持oracle、mysql数据库

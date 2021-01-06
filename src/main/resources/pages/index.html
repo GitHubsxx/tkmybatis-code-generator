@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <script type="text/javascript" src="/scripts/jquery-3.4.1.min.js"></script>
+    <link th:href="@{/layui/css/layui.css}" rel="stylesheet"/>
+    <script th:src="@{/layui/layui.js}"></script>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/common.css}" media="all"/>
+    <title>通用Mybatis基础代码智能生成工具</title>
+</head>
+<body>
+
+<form class="layui-form">
+    <fieldset class="layui-elem-field">
+        <legend>数据库配置</legend>
+        <div class="layui-field-box">
+            <div class="layui-form-item">
+                <label class="layui-form-label">数据库驱动</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="driverClass" required lay-verify="required"
+                           value=""
+                           placeholder="oracle.jdbc.OracleDriver"
+                           class="layui-input">
+                    <div class="layui-form-mid layui-word-aux">&nbsp;&nbsp;oracle.jdbc.OracleDriver</div>
+                    <div class="layui-form-mid layui-word-aux">&nbsp;&nbsp;com.mysql.cj.jdbc.Driver</div>
+                </div>
+
+                <label class="layui-form-label">URL</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="connectionURL" required lay-verify="required"
+                           value=""
+                           id="url_input"
+                           placeholder="jdbc:oracle:thin:@localhost:1521:test"
+                           class="layui-input">
+
+                    <div class="layui-form-mid layui-word-aux">
+                        &nbsp;&nbsp;jdbc:oracle:thin:@localhost:1521:test
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">
+                        &nbsp;&nbsp;jdbc:mysql://127.0.0.1:3306/ds0?useUnicode=true
+                    </div>
+                </div>
+
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">用户名</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="userName" required lay-verify="required" placeholder="sxx"
+                           value=""
+                           class="layui-input">
+                    <div class="layui-form-mid layui-word-aux">
+                        &nbsp;&nbsp;root
+                    </div>
+                </div>
+
+                <label class="layui-form-label">密码</label>
+                <div class="layui-input-inline">
+                    <input type="password" name="password" required lay-verify="required" placeholder=""
+                           value=""
+                           class="layui-input">
+                    <div class="layui-form-mid layui-word-aux">
+                        &nbsp;&nbsp;root
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </fieldset>
+
+    <fieldset class="layui-elem-field">
+        <legend>目标表</legend>
+        <div class="layui-field-box">
+            <div class="layui-form-item">
+                <label class="layui-form-label">表名</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="tables" required lay-verify="required" placeholder="多个以，分割"
+                           value=""
+                           class="layui-input">
+                    <div class="layui-form-mid layui-word-aux">
+                        &nbsp;&nbsp;t_test,t_demo
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">自定义实体类名(可选)</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="domains" placeholder="多个以，分割" value="" class="layui-input">
+                    <div class="layui-form-mid layui-word-aux">
+                        &nbsp;&nbsp;Test,Demo
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+
+    <!--<fieldset class="layui-elem-field">-->
+    <!--<legend>代码输出目录</legend>-->
+    <!--<div class="layui-field-box">-->
+    <!--<div class="layui-form-item">-->
+    <!--<label class="layui-form-label">输出目录</label>-->
+    <!--<div class="layui-input-inline">-->
+    <!--<input type="text" name="targetSrc" required lay-verify="required" placeholder="本地目录"-->
+    <!--value=""-->
+    <!--class="layui-input">-->
+    <!--</div>-->
+
+    <!--</div>-->
+    <!--</div>-->
+    <!--</fieldset>-->
+
+    <fieldset class="layui-elem-field">
+        <legend>包名</legend>
+        <div class="layui-field-box">
+            <div class="layui-form-item">
+                <label class="layui-form-label">项目包名前缀</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="packagePrefix" required lay-verify="required"
+                           placeholder="com.sxx.common"
+                           value=""
+                           class="layui-input">
+                    <div class="layui-form-mid layui-word-aux">
+                        &nbsp;&nbsp;com.sxx.common
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </fieldset>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label"><span style="color: red;font-weight: bolder">是否首次生成&nbsp;?</span></label>
+        <div class="layui-input-block">
+            <input type="checkbox" name="isFirst" lay-skin="switch" lay-text="Y|N" checked>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+
+<script>
+    layui.use(['layer', 'form'], function () {
+        var form = layui.form;
+        var layer = layui.layer;
+        //监听提交
+        form.on('submit(formDemo)', function (data) {
+            console.log(data.field);
+            var driverClass = data.field.driverClass;
+            var connectionURL = data.field.connectionURL;
+            var userName = data.field.userName;
+            var password = data.field.password;
+            var tables = data.field.tables;
+            var domains = data.field.domains;
+            var packagePrefix = data.field.packagePrefix;
+            var isFirst = data.field.isFirst;
+
+            var params = '?driverClass=' + driverClass + '&connectionURL=' + connectionURL + '&userName=' + userName + '&password=' + password
+                + '&tables=' + tables + '&domains=' + domains + '&packagePrefix=' + packagePrefix + '&isFirst=' + isFirst;
+
+            $.ajax({
+                type: "POST",
+                dataType: 'text',
+                contentType: "application/json;charset=UTF-8",
+                url: "/toGenerator" + params,
+                data: data.field,
+                //请求成功
+                success: function (result) {
+                    var obj = JSON.parse(result);
+                    if (obj.success) {
+                        layer.open({
+                            type: 1
+                            ,
+                            title: false //不显示标题栏
+                            ,
+                            closeBtn: false
+                            ,
+                            area: ['350px', '200px']
+                            ,
+                            shade: 0.8
+                            ,
+                            id: 'LAY_layuipro' //设定一个id，防止重复弹出
+                            ,
+                            btn: '关闭'
+                            ,
+                            btnAlign: 'c'
+                            ,
+                            moveType: 1 //拖拽模式，0或者1
+                            ,
+                            content: '<div style="padding: 20px; line-height: 22px; background-color: #393D49; color: #fff; font-weight: 300;">' +
+                            '<br/>' + obj.success + '<br/>确认后将自动下载Zip</div>'
+                            ,
+                            yes: function () {
+                                location.href = "/downloadZip";
+                                layer.closeAll();
+                            }
+                        });
+                    } else if (obj.error) {
+                        layer.open({
+                            type: 1
+                            ,
+                            title: false //不显示标题栏
+                            ,
+                            closeBtn: false
+                            ,
+                            area: ['350px', '200px']
+                            ,
+                            shade: 0.8
+                            ,
+                            id: 'LAY_layuipro' //设定一个id，防止重复弹出
+                            ,
+                            btn: '关闭'
+                            ,
+                            btnAlign: 'c'
+                            ,
+                            moveType: 1 //拖拽模式，0或者1
+                            ,
+                            content: '<div style="padding: 20px; line-height: 22px; background-color: #393D49; color: #fff; font-weight: 300;">' +
+                            'java代码生成失败！原因:' + obj.error + '</div>'
+                            ,
+                            yes: function () {
+                                layer.closeAll();
+                            }
+                        });
+                    }
+                },
+                //请求失败，包含具体的错误信息
+                error: function (e) {
+                    console.log(e.status);
+                    layer.open({
+                        type: 1
+                        ,
+                        title: false //不显示标题栏
+                        ,
+                        closeBtn: false
+                        ,
+                        area: ['350px', '200px']
+                        ,
+                        shade: 0.8
+                        ,
+                        id: 'LAY_layuipro' //设定一个id，防止重复弹出
+                        ,
+                        btn: '关闭'
+                        ,
+                        btnAlign: 'c'
+                        ,
+                        moveType: 1 //拖拽模式，0或者1
+                        ,
+                        content: '<div style="padding: 20px; line-height: 22px; background-color: #393D49; color: #fff; font-weight: 300;">' +
+                        'java代码生成失败！原因:' + e.responseText + '</div>'
+                        ,
+                        yes: function () {
+                            layer.closeAll();
+                        }
+                    });
+                }
+            });
+            return false;
+        });
+    });
+</script>
+
+</body>
+</html>

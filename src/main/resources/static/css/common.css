@@ -1,0 +1,13 @@
+.layui-form-label {
+    width: 140px;
+    height: 12px;
+}
+
+.layui-input {
+    width: 300px;
+}
+
+#url_input {
+    width: 700px;
+!important;
+}
